@@ -52,7 +52,7 @@ loss = tf.reduce_mean(tf.square(y - out)) #tf.squareで二乗を計算 tf.reduce
 train_step = tf.train.GradientDescentOptimizer(0.5).minimize(loss) #確率的勾配降下法,学習率0.5
 
 #評価を定義
-correct = tf.equal(tf.argmax(out,1),tf.argmax(y,1)) #argmax()で最大値を持っている要素番号を求めている
+correct = tf.equal(tf.argmax(out,1),tf.argmax(y,1)) #argmax()で最大値を持っている要素番号を求め,出力と教師データで比較している
 accuracy = tf.reduce_mean(tf.cast(correct,tf.float32))
 
 #変数の初期化

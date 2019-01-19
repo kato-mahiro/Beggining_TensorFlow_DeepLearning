@@ -25,11 +25,14 @@ with tf.name_scope("hidden"):
     h_1 = tf.nn.relu(tf.matmul(x, w_1) + b_1) 
     #中間層の重みの分布をログ出力
     tf.summary.histogram('w_1',w_1)
+    tf.summary.histogram('b_1',b_1)
 
 #中間層から出力層
 with tf.name_scope("output"):
     w_2 = tf.Variable(tf.truncated_normal([64, 10],stddev=0.1),name="w2")
     b_2 = tf.Variable(tf.zeros([10]),name="b2")
+    tf.summary.histogram('w_2',w_1)
+    tf.summary.histogram('b_2',b_1)
     out = tf.nn.softmax(tf.matmul(h_1, w_2) + b_2) #最終的な出力はsoftmax関数で
 
 y = tf.placeholder(tf.float32,[None,10])
@@ -50,7 +53,7 @@ with tf.name_scope("accuracy"):
     correct = tf.equal(tf.argmax(out,1),tf.argmax(y,1)) 
     accuracy = tf.reduce_mean(tf.cast(correct,tf.float32))
     #精度をログ出力
-    tf.summary.scalar("accuracy",accuracy)
+    tf.summary.scalar('accuracy',accuracy)
 
 #ログをマージ(まとめる)
 summary_op = tf.summary.merge_all()
@@ -59,12 +62,12 @@ summary_op = tf.summary.merge_all()
 init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
-    sess.run(init)
     #テストデータをロード
     test_images = mnist.test.images
     test_labels = mnist.test.labels
 
     #ログをファイルに書き込む
+    sess.run(init)
     summary_writer = tf.summary.FileWriter("./logfile",sess.graph)
     for i in range(1000):
         step = i + 1
