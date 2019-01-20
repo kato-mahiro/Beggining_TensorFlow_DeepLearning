@@ -4,6 +4,8 @@
 畳み込みニューラルネットワークのサンプル
 &
 tf.train.Saverにより学習モデルを保存する
+&
+/cnn_modelに学習モデルが存在すればロードする
 """
 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -69,21 +71,32 @@ accuracy = tf.reduce_mean(tf.cast(correct,tf.float32))
 init = tf.global_variables_initializer()
 
 """実行部分"""
-saver = tf.train.Saver() #全てのモデル・変数を対象とする
+saver = tf.train.Saver(max_to_keep = 3) #全てのモデル・変数を対象とする
 with tf.Session() as sess:
-    sess.run(init)
+    cnn_model_state = tf.train.get_checkpoint_state('cnn_model/') #学習済みモデルを読み込み
+    if cnn_model_state:
+        last_model = cnn_model_state.model_checkpoint_path
+        saver.restore(sess,last_model)
+        print("!!!!!!!!!!!!!!!!!")
+        print("model was loaded:",last_model)
+        print("!!!!!!!!!!!!!!!!!")
+    else:
+        sess.run(init)
+        print("!!!!!!!!!!!!!!!!!")
+        print("initialized.")
+        print("!!!!!!!!!!!!!!!!!")
+
     #テストデータをロード
     test_images = mnist.test.images
     test_labels = mnist.test.labels
 
-    for i in range(101):
-        step = i + 1
+    for step in range(1000):
         train_images, train_labels = mnist.train.next_batch(50)
         sess.run(train_step,feed_dict={x:train_images, y:train_labels})
 
-        if step % 100 == 0:
+        if (step) % 100 == 0:
             acc_val = sess.run(accuracy, feed_dict={x:test_images, y:test_labels})
             print('Step %d: accuracy = %.2f' % (step,acc_val))
 
     """モデルの保存"""
-    saver.save(sess,'cpkt/cnn_model')
+    saver.save(sess,'cnn_model/cnn_model',global_step = step,write_meta_graph=False)
