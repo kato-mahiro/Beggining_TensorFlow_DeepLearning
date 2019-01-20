@@ -2,6 +2,8 @@
 
 """
 畳み込みニューラルネットワークのサンプル
+&
+tf.train.Saverにより学習モデルを保存する
 """
 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -67,13 +69,14 @@ accuracy = tf.reduce_mean(tf.cast(correct,tf.float32))
 init = tf.global_variables_initializer()
 
 """実行部分"""
+saver = tf.train.Saver() #全てのモデル・変数を対象とする
 with tf.Session() as sess:
     sess.run(init)
     #テストデータをロード
     test_images = mnist.test.images
     test_labels = mnist.test.labels
 
-    for i in range(1000):
+    for i in range(101):
         step = i + 1
         train_images, train_labels = mnist.train.next_batch(50)
         sess.run(train_step,feed_dict={x:train_images, y:train_labels})
@@ -81,3 +84,6 @@ with tf.Session() as sess:
         if step % 100 == 0:
             acc_val = sess.run(accuracy, feed_dict={x:test_images, y:test_labels})
             print('Step %d: accuracy = %.2f' % (step,acc_val))
+
+    """モデルの保存"""
+    saver.save(sess,'cpkt/cnn_model')
