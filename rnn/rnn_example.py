@@ -1,4 +1,0 @@
-"""
-Sample of RNN
-"""
-
