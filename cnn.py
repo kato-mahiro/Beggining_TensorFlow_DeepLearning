@@ -8,6 +8,8 @@ tf.train.Saverにより学習モデルを保存する
 /cnn_modelに学習モデルが存在すればロードする
 """
 
+import time
+s=time.time()
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
 mnist = input_data.read_data_sets("data/", one_hot=True)
@@ -100,3 +102,5 @@ with tf.Session() as sess:
 
     """モデルの保存"""
     saver.save(sess,'cnn_model/cnn_model',global_step = step,write_meta_graph=False)
+e=time.time()
+print('time:',e-s)
