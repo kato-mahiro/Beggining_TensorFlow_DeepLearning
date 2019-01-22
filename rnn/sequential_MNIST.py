@@ -30,9 +30,11 @@ outputs, states = tf.nn.dynamic_rnn(cell=cell, inputs=input, dtype=tf.float32)
 
 #3階テンソルを2階テンソルのリストに変換(これなんだ?)　
 outputs_list = tf.unstack(outputs,axis=1)
-
 #最後の時間軸のTensorを取得
 last_output = outputs_list[-1]
+
+#上の２つの処理は以下の一行と同じ意味みたいです
+#last_output = outputs[:,-1,:]
 
 w = tf.Variable(tf.truncated_normal([128,10],stddev=0.1))
 b = tf.Variable(tf.Variable(tf.zeros([10])))
